@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -9,7 +9,8 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  DateTime selectedDate = DateTime.now();
+  DateTime _selectedDate = DateTime.now(); //data selecionada
+  DateTime _today = DateTime.now(); // data em foco no calendário
 
   //Lista de serviços
   final List<String> services = [
@@ -34,6 +35,40 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   // Profissional selecionado
   String? selectedProfessional;
 
+  // Função para criar cabeçalhos de seção
+  Widget _buildSectionHeader(String title) {
+    return Container(
+      color: Colors.black,
+      width: double.infinity,
+      height: 40,
+      child: Center(
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Função para criar cartões de informação
+  Widget _buildInfoCard({required String content}) {
+    return Card(
+      color: const Color.fromARGB(255, 209, 207, 207),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Text(
+          content,
+          style: const TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,20 +83,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              color: Colors.black,
-              width: double.infinity,
-              height: 40,
-              child: const Center(
-                child: Text(
-                  'Serviço',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
+            _buildSectionHeader('Serviço'),
             DropdownButton<String>(
               hint: const Text('Selecione um serviço'),
               value: selectedService,
@@ -78,37 +100,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               },
             ),
             const SizedBox(height: 20),
-            Card(
-              color: const Color.fromARGB(255, 209, 207, 207),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                  child: // Exibir o serviço selecionado
-                      Text(
-                    selectedService == null
-                        ? 'Nenhum serviço selecionado'
-                        : 'Serviço selecionado: $selectedService',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
+            _buildInfoCard(
+              content: selectedService == null
+                  ? 'Nenhum serviço selecionado'
+                  : 'Serviço selecionado: $selectedService',
             ),
             const SizedBox(height: 20),
-            Container(
-              color: Colors.black,
-              width: double.infinity,
-              height: 40,
-              child: const Center(
-                child: Text(
-                  'Profissional',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
+            _buildSectionHeader('Profissional'),
             DropdownButton<String>(
               hint: const Text('Selecione um profissional'),
               value: selectedProfessional,
@@ -125,147 +123,51 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               },
             ),
             const SizedBox(height: 20),
-            Card(
-              color: const Color.fromARGB(255, 209, 207, 207),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                  child: // Exibir o profissional selecionado
-                      Text(
-                    selectedProfessional == null
-                        ? 'Nenhum profissional selecionado'
-                        : 'Profissional selecionado: $selectedProfessional',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
+            _buildInfoCard(
+              content: selectedProfessional == null
+                  ? 'Nenhum profissional selecionado'
+                  : 'Profissional selecionado: $selectedProfessional',
             ),
             const SizedBox(height: 20),
-            Container(
-              color: Colors.black,
-              width: double.infinity,
-              height: 40,
-              child: const Center(
-                child: Text(
-                  'Data',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+            _buildSectionHeader('Data'),
+            //-----------------------------------------------//
+            TableCalendar(
+              locale: "pt_BR",
+              focusedDay: _today,
+              firstDay: DateTime.now(),
+              lastDay: DateTime.now().add(
+                const Duration(days: 365),
+              ),
+              // Função usada para determinar se um dia está selecionado
+              selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
+              //  Callback que dispara ao selecionar uma data
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  _selectedDate = selectedDay;
+                  _today = focusedDay;
+                });
+              },
+              calendarStyle: const CalendarStyle(
+                  todayDecoration: BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.circle,
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Card(
-              color: const Color.fromARGB(255, 209, 207, 207),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                  child: Text(
-                    '${selectedDate.day.toString().padLeft(2, '0')}/${selectedDate.month.toString().padLeft(2, '0')}/${selectedDate.year}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
+                  selectedDecoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
                   ),
-                ),
+                  weekendTextStyle: TextStyle(color: Colors.red)),
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
               ),
             ),
-            const SizedBox(
-              height: 20,
+            _buildInfoCard(
+              content: 'Data selecionada: '
+                  '${_selectedDate.day.toString().padLeft(2, '0')}/'
+                  '${_selectedDate.month.toString().padLeft(2, '0')}/'
+                  '${_selectedDate.year}',
             ),
-            Center(
-              child: CupertinoButton(
-                color: Colors.black,
-                child: const Text('Escolher data'),
-                onPressed: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (BuildContext context) => SizedBox(
-                      height: 250,
-                      child: CupertinoDatePicker(
-                        backgroundColor: Colors.white,
-                        initialDateTime: selectedDate,
-                        onDateTimeChanged: (DateTime newTime) {
-                          setState(() {
-                            selectedDate = newTime;
-                          });
-                        },
-                        use24hFormat: true,
-                        mode: CupertinoDatePickerMode.date,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            Container(
-              color: Colors.black,
-              width: double.infinity,
-              height: 40,
-              child: const Center(
-                child: Text(
-                  'Hora',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Card(
-              color: const Color.fromARGB(255, 209, 207, 207),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                child: Center(
-                  child: Text(
-                    '${selectedDate.hour.toString().padLeft(2, '0')}:${selectedDate.minute.toString().padLeft(2, '0')}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: CupertinoButton(
-                color: Colors.black,
-                child: const Text('Escolher hora'),
-                onPressed: () {
-                  showCupertinoModalPopup(
-                    context: context,
-                    builder: (BuildContext context) => SizedBox(
-                      height: 250,
-                      child: CupertinoDatePicker(
-                        backgroundColor: Colors.white,
-                        initialDateTime: selectedDate,
-                        onDateTimeChanged: (DateTime newTime) {
-                          setState(() {
-                            selectedDate = newTime;
-                          });
-                        },
-                        use24hFormat: true,
-                        mode: CupertinoDatePickerMode.time,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 50),
           ],
         ),
       ),

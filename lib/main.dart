@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           Locale('pt', 'BR'),
         ],
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        initialRoute: '/schedule',
         routes: {
           '/': (context) => LoginScreen(),
           '/home': (context) => HomeScreen(),

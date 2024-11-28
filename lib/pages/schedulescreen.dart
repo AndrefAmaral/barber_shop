@@ -69,6 +69,21 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  // Lista de horários disponíveis
+  final List<String> timeSlots = [
+    "08:00 - 09:00",
+    "09:00 - 10:00",
+    "10:00 - 11:00",
+    "11:00 - 12:00",
+    "14:00 - 15:00",
+    "15:00 - 16:00",
+    "16:00 - 17:00",
+    "17:00 - 18:00",
+  ];
+
+  //Horário selecionado
+  String selectedTimeSlot = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +145,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
             const SizedBox(height: 20),
             _buildSectionHeader('Data'),
-            //-----------------------------------------------//
             TableCalendar(
               locale: "pt_BR",
               focusedDay: _today,
@@ -148,15 +162,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 });
               },
               calendarStyle: const CalendarStyle(
-                  todayDecoration: BoxDecoration(
-                    color: Colors.blue,
-                    shape: BoxShape.circle,
-                  ),
-                  selectedDecoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
-                  ),
-                  weekendTextStyle: TextStyle(color: Colors.red)),
+                todayDecoration: BoxDecoration(),
+                todayTextStyle: TextStyle(fontWeight: FontWeight.bold),
+                selectedDecoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                selectedTextStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                weekendTextStyle: TextStyle(color: Colors.red),
+              ),
               headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
@@ -167,6 +184,56 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   '${_selectedDate.day.toString().padLeft(2, '0')}/'
                   '${_selectedDate.month.toString().padLeft(2, '0')}/'
                   '${_selectedDate.year}',
+            ),
+            _buildSectionHeader('Horário'),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 250, // Define uma altura fixa para o Expanded
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Número de colunas
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 2.5, // Proporção largura/altura
+                    ),
+                    itemCount: timeSlots.length,
+                    itemBuilder: (context, index) {
+                      final timeSlot = timeSlots[index];
+                      final isSelected = timeSlot == selectedTimeSlot;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedTimeSlot = timeSlot;
+                          });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.blue : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isSelected ? Colors.blue : Colors.grey,
+                              width: 2,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            timeSlot,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected ? Colors.white : Colors.black,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ],
         ),

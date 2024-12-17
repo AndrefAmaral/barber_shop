@@ -1,7 +1,8 @@
 import 'package:barber_shop/pages/homescreen.dart';
-import 'package:barber_shop/pages/loginscreen.dart';
 import 'package:barber_shop/pages/schedulescreen.dart';
 import 'package:barber_shop/providers/user_provider.dart';
+import 'package:barber_shop/services/auth_service.dart';
+import 'package:barber_shop/widgets/auth_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -24,9 +25,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => UserProvider(),
-        )
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => AuthService()),
       ],
       child: MaterialApp(
         localizationsDelegates: const [
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
-          '/': (context) => LoginScreen(),
+          '/': (context) => const AuthCheck(),
           '/home': (context) => HomeScreen(),
           '/schedule': (context) => const ScheduleScreen(),
         },

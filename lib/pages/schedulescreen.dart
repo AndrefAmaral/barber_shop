@@ -1,4 +1,6 @@
+import 'package:barber_shop/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ScheduleScreen extends StatefulWidget {
@@ -235,6 +237,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: OutlinedButton(
+                  onPressed: () => context.read<AuthService>().logout(),
+                  style: OutlinedButton.styleFrom(foregroundColor: Colors.red),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          'Sair do App',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  )),
+            )
           ],
         ),
       ),

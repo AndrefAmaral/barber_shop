@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:barber_shop/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -101,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Informe o email corretamente';
+                        return 'Informe o email corretamente!';
                       }
                       return null;
                     },
@@ -129,6 +131,10 @@ class _LoginPageState extends State<LoginPage> {
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2D3E50),
+                      foregroundColor: Colors.white,
+                    ),
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         if (isLogin) {
@@ -148,7 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
-                                      color: Colors.white),
+                                    color: Colors.white,
+                                  ),
                                 ),
                               )
                             ]
@@ -162,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                                     fontSize: 20,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                     ),
                   ),

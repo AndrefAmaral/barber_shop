@@ -1,5 +1,5 @@
 import 'package:barber_shop/pages/login_page.dart';
-import 'package:barber_shop/pages/schedulescreen.dart';
+import 'package:barber_shop/pages/schedule_page.dart';
 import 'package:barber_shop/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +21,7 @@ class _AuthCheckState extends State<AuthCheck> {
     } else if (auth.usuario == null)
       return const LoginPage();
     else
-      return const ScheduleScreen();
+      return const SchedulePage();
   }
 }
 

@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class ScheduleScreen extends StatefulWidget {
-  const ScheduleScreen({super.key});
+class SchedulePage extends StatefulWidget {
+  const SchedulePage({super.key});
 
   @override
-  State<ScheduleScreen> createState() => _ScheduleScreenState();
+  State<SchedulePage> createState() => _ScheduleScreenState();
 }
 
-class _ScheduleScreenState extends State<ScheduleScreen> {
-  DateTime _selectedDate = DateTime.now(); //data selecionada
+class _ScheduleScreenState extends State<SchedulePage> {
+  //DateTime _selectedDate = DateTime.now(); //data selecionada
+  DateTime? _selectedDate; //ALTERAÇÂO 1
   DateTime _today = DateTime.now(); // data em foco no calendário
 
   //Lista de serviços
@@ -152,7 +153,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               focusedDay: _today,
               firstDay: DateTime.now(),
               lastDay: DateTime.now().add(
-                const Duration(days: 365),
+                const Duration(days: 30),
               ),
               // Função usada para determinar se um dia está selecionado
               selectedDayPredicate: (day) => isSameDay(_selectedDate, day),
@@ -181,11 +182,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 titleCentered: true,
               ),
             ),
+            // _buildInfoCard(
+            //   content: 'Data selecionada: '
+            //       '${_selectedDate.day.toString().padLeft(2, '0')}/'
+            //       '${_selectedDate.month.toString().padLeft(2, '0')}/'
+            //       '${_selectedDate.year}',
+            // ),
             _buildInfoCard(
-              content: 'Data selecionada: '
-                  '${_selectedDate.day.toString().padLeft(2, '0')}/'
-                  '${_selectedDate.month.toString().padLeft(2, '0')}/'
-                  '${_selectedDate.year}',
+              content: _selectedDate == null
+                  ? 'Nenhuma data selecionada'
+                  : 'Data selecionada: '
+                      '${_selectedDate!.day.toString().padLeft(2, '0')}/'
+                      '${_selectedDate!.month.toString().padLeft(2, '0')}/'
+                      '${_selectedDate!.year}',
+              //O ! é utilizado para indicar ao Dart que a variável não será null naquele momento
             ),
             _buildSectionHeader('Horário'),
             const SizedBox(height: 20),
@@ -237,6 +247,72 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
               ),
             ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: (selectedService != null &&
+                        selectedProfessional != null &&
+                        _selectedDate != null &&
+                        selectedTimeSlot.isNotEmpty)
+                    ? () {
+                        // Lógica para confirmar o agendamento
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Agendamento Confirmado"),
+                            content: Text(
+                              "Serviço: $selectedService\n"
+                              "Profissional: $selectedProfessional\n"
+                              "Data: ${_selectedDate!.day.toString().padLeft(2, '0')}/"
+                              "${_selectedDate!.month.toString().padLeft(2, '0')}/"
+                              "${_selectedDate!.year}\n"
+                              "Horário: $selectedTimeSlot",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text("OK"),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2D3E50),
+                ),
+                child: const Text(
+                  'Confirmar agendamento',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(10.0),
+            //   child: Column(
+            //     children: [
+            //       SizedBox(
+            //         width: double.infinity,
+            //         child: ElevatedButton(
+            //           onPressed: () {},
+            //           style: ElevatedButton.styleFrom(
+            //             backgroundColor: const Color(0xFF2D3E50),
+            //           ),
+            //           child: const Text(
+            //             'Confirmar agendamento',
+            //             style: TextStyle(
+            //               color: Colors.white,
+            //               fontWeight: FontWeight.bold,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: OutlinedButton(
@@ -254,7 +330,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       ),
                     ],
                   )),
-            )
+            ),
           ],
         ),
       ),
